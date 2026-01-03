@@ -13,13 +13,9 @@
 
 
 void fordJohnsonVector(std::vector<int>& arr);
-void binaryInsertVector(std::vector<int>& main, int element);
 
 void fordJohnsonDeque(std::deque<int>& arr);
-void binaryInsertDeque(std::deque<int>& main, int element);
 
 std::vector<size_t> generateJacobsthal(size_t n);
-void sortVector(std::vector<int>& arr);
-void sortDeque(std::deque<int>& arr);
 
 #endif

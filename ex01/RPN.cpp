@@ -40,9 +40,13 @@ int RPN::calculate(const std::string& expression)
 	
 	while (iss >> token)
 	{
-		if (token.length() == 1 && std::isdigit(token[0]))
+		char *endptr;
+		long num = std::strtol(token.c_str(), &endptr, 10);
+		
+		// If entire token was consumed, it's a valid number
+		if (*endptr == '\0' && endptr != token.c_str())
 		{
-			_stack.push(token[0] - '0');
+			_stack.push(static_cast<int>(num));
 		}
 		else if (token == "+" || token == "-" || token == "*" || token == "/")
 		{

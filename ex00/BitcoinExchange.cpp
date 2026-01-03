@@ -6,7 +6,7 @@
 /*   By: rteoh <rteoh@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/12 22:32:25 by rteoh             #+#    #+#             */
-/*   Updated: 2025/12/25 16:07:08 by rteoh            ###   ########.fr       */
+/*   Updated: 2026/01/03 16:03:14 by rteoh            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,14 +98,20 @@ bool BitcoinExchange::CheckValidDate(const std::string& str_date)
 {
 	//follow format
     if (str_date.length() != 10 || str_date[4] != '-' || str_date[7] != '-')
-        return false;
+	{
+		std::cout << "Error: bad input date => " << str_date << std::endl;
+		return false;
+	}
     
     for (size_t i = 0; i < 10; ++i) 
 	{
         if (i == 4 || i == 7) 
 			continue;
         if (!std::isdigit(str_date[i]))
+		{
+			std::cout << "Error: bad input date => " << str_date << std::endl;
             return false;
+		}
     }
     //seperate the string
     int year = std::atoi(str_date.substr(0, 4).c_str());
@@ -113,25 +119,34 @@ bool BitcoinExchange::CheckValidDate(const std::string& str_date)
     int day = std::atoi(str_date.substr(8, 2).c_str());
     
     if (month < 1 || month > 12 || day < 1 || day > 31)
-        return false;
+	{
+		std::cout << "Error: bad input date => " << str_date << std::endl;
+		return false;
+	}
     //check month days whether its valid
     if (month == 2)
 	{
         bool leap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
         if (day > (leap ? 29 : 28)) 
+		{
+			std::cout << "Error: bad input date => " << str_date << std::endl;
 			return false;
+		}
     } 
 	else if (month == 4 || month == 6 || month == 9 || month == 11) 
 	{
         if (day > 30) 
+		{
+			std::cout << "Error: bad input date => " << str_date << std::endl;
 			return false;
+		}
     }
     
     if (!first_date.empty()) 
 	{
         if (str_date < first_date)
 		{
-			std::cout << "Error: bad input, before first date => " << str_date << std::endl;
+			std::cout << "Error: bad input date => " << str_date << std::endl;
 			return false;
 		}
     }
@@ -145,23 +160,30 @@ bool BitcoinExchange::CheckValidValue(const std::string& str_value, double& resu
 	std::string trim_value = _trim(str_value);
 	std::istringstream ss(trim_value);
 	// std::cout << str_value << std::endl;
+	//will fail if its a string
 	if (!(ss >> result))
+	{
+		std::cout << "Error: bad input for value =>" << ss.str() << std::endl;
 		return false;
+	}
 	// std::cout << result << std::endl;
 	char leftover;
 	while (ss.get(leftover))
 	{
 		if (!std::isspace(leftover))
+		{
+			std::cout << "Error: bad input for value =>" << str_value << std::endl;
 			return false;
+		}
 	}
 	if (result > 1000) 
 	{
-		std::cout << "Error: too large a number." << std::endl;
+		std::cout << "Error: too large a number. => " << result << std::endl;
 		return false;
 	}
 	else if (result < 0)
 	{
-		std::cout << "Error: not a positive number." << std::endl;
+		std::cout << "Error: not a positive number. => " << result << std::endl;
 		return false;
 	}
 	return true;
@@ -237,8 +259,8 @@ void BitcoinExchange::ProcessInputFile(const std::string& filename)
 			std::cout << "Error: bad input => " << line << std::endl;
 			continue ;
 		}
-		std::string date = line.substr(0, pipe_pos - 1);
-		std::string value_str = line.substr(pipe_pos + 2);
+		std::string date = _trim(line.substr(0, pipe_pos));
+		std::string value_str = _trim(line.substr(pipe_pos + 1));
 		// std::cout << date;
 		// std::cout << value_str;
 		
